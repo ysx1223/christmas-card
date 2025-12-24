@@ -295,7 +295,7 @@
     applyWish(wishIndex);
 
     $("#btnWish").addEventListener("click", () => {
-      startMusicIfNeeded();
+      // startMusicIfNeeded();
       wishIndex = (wishIndex + 1) % wishes.length;
       applyWish(wishIndex);
       burstConfetti(70);
@@ -316,11 +316,11 @@
   }
 }
 
-    // 触发播放：圣诞树 / 换一句
-$("#tree").addEventListener("click", () => {
-  startMusicIfNeeded();
-  // 你原本树点击会撒彩纸的逻辑如果在别处，保留即可
-});
+//     // 触发播放：圣诞树 / 换一句
+// $("#tree").addEventListener("click", () => {
+//   startMusicIfNeeded();
+//   // 你原本树点击会撒彩纸的逻辑如果在别处，保留即可
+// });
 
 
     $("#btnPlay").addEventListener("click", async () => {
