@@ -294,50 +294,55 @@
     }
     applyWish(wishIndex);
 
-    $("#btnWish").addEventListener("click", () => {
-      // startMusicIfNeeded();
-      wishIndex = (wishIndex + 1) % wishes.length;
-      applyWish(wishIndex);
-      burstConfetti(70);
-    });
+// Music toggle (user gesture required by browsers)
+const music = $("#music");
+let playing = false;
 
-    // Music toggle (user gesture required by browsers)
-    const music = $("#music");
-    let playing = false;
+// 只允许“换一句”触发一次自动播放（且需播放成功才算触发过）
+let wishAutoPlayed = false;
 
-    async function startMusicIfNeeded() {
-  if (playing) return;
+async function startMusicIfNeeded() {
+  // 返回是否成功开始播放
+  if (playing) return true;
   try {
     await music.play();
     playing = true;
     $("#btnPlay").textContent = "🔊 音乐";
+    return true;
   } catch (e) {
-    // 忽略：某些环境下仍可能需要更明确的用户手势
+    // 可能因为资源未加载/权限等失败
+    return false;
   }
 }
 
-//     // 触发播放：圣诞树 / 换一句
-// $("#tree").addEventListener("click", () => {
-//   startMusicIfNeeded();
-//   // 你原本树点击会撒彩纸的逻辑如果在别处，保留即可
-// });
+$("#btnWish").addEventListener("click", async () => {
+  // 仅第一次“换一句”尝试播放；成功后永不再触发
+  if (!wishAutoPlayed) {
+    const ok = await startMusicIfNeeded();
+    if (ok) wishAutoPlayed = true;
+  }
 
+  wishIndex = (wishIndex + 1) % wishes.length;
+  applyWish(wishIndex);
+  burstConfetti(70);
+});
 
-    $("#btnPlay").addEventListener("click", async () => {
-      try{
-        if(!playing){
-          await music.play();
-          playing = true;
-          $("#btnPlay").textContent = "🔊 音乐";
-        }else{
-          music.pause();
-          playing = false;
-          $("#btnPlay").textContent = "🔈 音乐";
-        }
-      }catch{
-        // ignore (autoplay restrictions / network)
-      }
-    });
+$("#btnPlay").addEventListener("click", async () => {
+  try {
+    if (!playing) {
+      await music.play();
+      playing = true;
+      $("#btnPlay").textContent = "🔊 音乐";
+    } else {
+      music.pause();
+      playing = false;
+      $("#btnPlay").textContent = "🔈 音乐";
+    }
+  } catch {
+    // ignore
+  }
+});
+
 
     // Confetti
     const confetti = $("#confetti");
