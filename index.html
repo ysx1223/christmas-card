@@ -303,6 +303,26 @@
     // Music toggle (user gesture required by browsers)
     const music = $("#music");
     let playing = false;
+    // 方案1：首次点击页面任意位置 -> 自动播放（符合浏览器策略）
+let autoStarted = false;
+
+async function tryStartMusic() {
+  if (autoStarted) return;
+  autoStarted = true;
+  try {
+    await music.play();
+    playing = true;
+    $("#btnPlay").textContent = "🔊 音乐";
+  } catch (e) {
+    autoStarted = false; // 失败则允许下一次点击再尝试
+  }
+}
+
+// 任意位置首次交互触发
+window.addEventListener("pointerdown", tryStartMusic, { passive: true });
+window.addEventListener("keydown", tryStartMusic);
+
+// 仍保留按钮的播放/暂停控制
 
     $("#btnPlay").addEventListener("click", async () => {
       try{
